@@ -5,6 +5,7 @@ from wsgiref.simple_server import make_server
 
 if __name__ == "__main__":
 	booster = falcon.App()
+	booster.resp_options.secure_cookies_by_default = False
 	booster.add_route("/login",Flows.Login())
 	booster.add_route("/",Flows.Main())
 	booster.add_route("/hb",Flows.Heartbeat())

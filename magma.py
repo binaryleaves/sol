@@ -16,26 +16,29 @@ class Flows():
 					print(req.cookies["auth"])
 					ubase = pydblite.Base("userdb").open()
 					for r in ubase:
-						if req.cookies["auth"] == r["password"]	+str(md5(r["name"].encode()).digest()):
-							pass
+						if str(req.cookies["auth"]) == str(r["password"])	+str(md5(r["name"].encode()).digest()):
+							print("Login success")
+							with open("themes/default/mainpage.j2") as f:
+								resp.content_type = falcon.MEDIA_HTML
+								resp.text = jinja2.Template(f.read()).render(instanceTitle=Config.InstanceName,profile=r,postsUnified=False)
 	class Heartbeat():
 		def on_get(self,req,resp):
 			resp.text = f"timeMs {str(int(time_ns()//1000000))} timeSec {str(int(time()))}"
 	class Login():
 		def on_get(self,req,resp):
-			if req.cookies:
-				if req.cookies["auth"]:
-					raise falcon.HTTPMovedPermanently("/")
 			with open("themes/default/loginpage.j2") as f:
 				resp.content_type = falcon.MEDIA_HTML
 				resp.text = jinja2.Template(f.read()).render(instanceTitle=Config.InstanceName)
 		def on_post(self,req,resp):
+			if req.cookies:
+				if req.cookies["auth"]:
+					raise falcon.HTTPMovedPermanently("/")
 			ubase = pydblite.Base("userdb").open()
 			for r in ubase:
 				if req.media["usr"] in r["name"]:
 					if str(md5(req.media["pwd"].encode()).digest()) == r["password"]:
-						print("Login success")
-						resp.set_cookie("auth", str(md5(req.media["pwd"].encode()).digest())+str(md5(req.media["usr"].encode()).digest()))
+						resp.set_cookie("auth",str(md5(req.media["pwd"].encode()).digest())+str(md5(str(req.media["usr"]+"@"+Config.Url).encode()).digest()))
+						
 					else:
 						raise falcon.HTTPMovedPermanently("/login")
 			ubase.insert(
@@ -70,4 +73,4 @@ if __name__ == "__main__":
 		True
 		)
 		ubase.commit()
-		print("Your password is %s"%pwd)
+		print("Your password for %s is %s"%(Config.InitialUsername,pwd))
