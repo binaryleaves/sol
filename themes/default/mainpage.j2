@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<style>
+.sidebar {
+height: 200px;
+width: 150px;
+position: fixed;
+top: 0;
+left: 0;
+padding-top: 40px;
+background-color: lightblue;
+}
+
+.sidebar div {
+padding: 8px;
+font-size: 24px;
+display: block;
+}
+
+.body-text {
+margin-left: 150px;
+font-size: 18px;
+}
+</style>
+<head>
+<title> {{ instanceTitle }} | Login </title>
+</head>
+<body>
+
+<div class="sidebar">
+<div>Post</div>
+<div>Edit profile</div>
+{% if profile["mod"] or profile["admin"] %}
+<div>Moderation</div>
+{% endif %}
+</div>
+
+<div class="body-text">
+{% if postsUnified %}
+{{ postsUnified }}
+{% else %}
+This is the main menu.
+{% endif %}
+</div>
+
+</body>
+</html>
