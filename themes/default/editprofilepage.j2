@@ -23,17 +23,9 @@ display: block;
 margin-left: 15%;
 font-size: 18px;
 }
-
-img {
-display: block;
-height: 5%;
-width: 5%;
-object-fit: contain;
-border-radius: 50%;
-}
 </style>
 <head>
-<title> {{ instanceTitle }} | Main </title>
+<title> {{ instanceTitle }} | Edit Profile </title>
 </head>
 <body>
 
@@ -45,12 +37,10 @@ border-radius: 50%;
 </div>
 
 <div class="body-text">
-{% if postsUnified %}
-{{ postsUnified }}
-{% else %}
-This is the main menu.<br/>
-There are currently no posts right now.
-{% endif %}
+<form action="/edpr" method="post" enctype="multipart/form-data">
+<input type="file" name="pfp"></input><br/><br/>
+<input type="submit" value="Update Profile"></input>
+</form>
 </div>
 
 </body>

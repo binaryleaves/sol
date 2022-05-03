@@ -23,17 +23,9 @@ display: block;
 margin-left: 15%;
 font-size: 18px;
 }
-
-img {
-display: block;
-height: 5%;
-width: 5%;
-object-fit: contain;
-border-radius: 50%;
-}
 </style>
 <head>
-<title> {{ instanceTitle }} | Main </title>
+<title> {{ instanceTitle }} | Make Post </title>
 </head>
 <body>
 
@@ -45,12 +37,10 @@ border-radius: 50%;
 </div>
 
 <div class="body-text">
-{% if postsUnified %}
-{{ postsUnified }}
-{% else %}
-This is the main menu.<br/>
-There are currently no posts right now.
-{% endif %}
+<form action="/mkpo" method="post">
+<textarea name="post" rows="10",cols="10">Type your post here, limit is {{ characterLimitGeneral }} characters.</textarea><br/><br/>
+<input type="submit" value="{{ postButtonText }}"/>
+</form>
 </div>
 
 </body>
