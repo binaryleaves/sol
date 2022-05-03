@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<style>
+.sidebar {
+min-height: 100%;
+height: auto !important;
+height: 100%;
+width: 15%;
+position: fixed;
+top: 0;
+left: 0;
+padding-top: 40px;
+background-color: lightblue;
+}
+
+.sidebar div {
+padding: 8px;
+font-size: 24px;
+display: block;
+}
+
+.body-text {
+margin-left: 15%;
+font-size: 18px;
+}
+</style>
+<head>
+<title> {{ instanceTitle }} | {{ profile["name"] }}'s Profile</title>
+</head>
+<body>
+
+<div class="sidebar">
+<div><a href="/login">Log in</a></div>
+</div>
+
+<div class="body-text">
+<img src="{{ profile["pfpPointer"] }}"><br/><br/>
+{{ profile["name"] }}<br/><br/>
+<hr/><br/><br/>
+{{ profilePostsUnified }}
+</div>
+
+</body>
+</html>
