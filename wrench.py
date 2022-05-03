@@ -9,7 +9,7 @@ class Config():
     DefaultDesc = "I'm a very mysterious person."
     CharacterLimitGeneral = 100000
     PostButtonText = "Post | Remember the human"
-    DefaultPFP = "themes/default/defaultPfp.png"
+    DefaultPFP = "resources/defaultPfp.png"
     Host = "127.0.0.1"
     Port = 6969
 

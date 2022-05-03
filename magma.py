@@ -25,6 +25,15 @@ def CustomBearerAuth(req,resp,res,gimme=False):
         raise falcon.HTTPMovedPermanently("/login")
 
 class Flows():
+    class HardResource():
+        def on_get(self,req,resp,res):
+            with open(req.path[1:],"rb") as f:
+                if req.path[-1:-4:-1] == "gnp":
+                    resp.content_type = falcon.MEDIA_PNG
+                    resp.text = f.read()
+                elif req.path[-1:-4:-1] == "gpj" or req.path[-1:-4:-1] == "gep":
+                    resp.content_type = falcon.MEDIA_JPEG
+                    resp.text = f.read()            
     class Attachments():
         def on_get(self,req,resp,user,attch):
             with open(req.path[1:],"rb") as f:
@@ -44,13 +53,12 @@ class Flows():
                 user = CustomBearerAuth(req,resp,self,True) 
                 if len(pbase) != 0:
                     for r in pbase:
-                        postsUnified += "<br/><br/>%s"%r["user"] + "<br/><br/><img src='/%s'/><br/>"%user["pfpPointer"] + r["content"] + "<br/><br/><br/><hr/>"
+                        postsUnified += "<br/><br/>%s"%r["user"] + "<br/><br/><img src='%s'/><br/>"%user["pfpPointer"] + r["content"] + "<br/><br/><br/><hr/>"
                 resp.text = jinja2.Template(f.read()).render(instanceTitle=Config.InstanceName,postsUnified=postsUnified)
     class CreatePost():
         @falcon.before(CustomBearerAuth)
         def on_post(self,req,resp):
             r = CustomBearerAuth(req,resp,self,True)
-            print(r["name"])
             pbase = pydblite.Base("postdb").open()
             pbase.insert(req.media["post"],False,r["name"],False,True,False)
             pbase.commit()
@@ -60,9 +68,15 @@ class Flows():
             with open("themes/default/postpage.j2") as f:
                 resp.content_type = falcon.MEDIA_HTML
                 resp.text = jinja2.Template(f.read()).render(instanceTitle=Config.InstanceName,characterLimitGeneral=Config.CharacterLimitGeneral,postButtonText=Config.PostButtonText)
+    class Profile():
+        def on_get(self,req,resp):
+            with open("themes/default/profpage.j2") as f:
+                resp.content_type = falcon.MEDIA_HTML
+                resp.text = jinja2.Template(f.read()).render(instanceTitle=Config.InstanceName)
     class EditProfile():
         @falcon.before(CustomBearerAuth)
         def on_post(self,req,resp):
+            ubase = pydblite.Base("userdb").open()
             r = CustomBearerAuth(req,resp,self,True)
             media = req.get_media()
             for part in media:
@@ -77,11 +91,8 @@ class Flows():
                             f.truncate()
                     except Exception as e:
                         pass
-                    try:
-                        ubase.update(r,pfpPointer="attachments/%s/%s"%(r["name"],part.secure_filename))
-                        ubase.commit()
-                    except Exception as e:
-                        pass
+                    ubase.update(r,pfpPointer="/attachments/%s/%s"%(r["name"],part.secure_filename))
+                    ubase.commit()
                     raise falcon.HTTPMovedPermanently("/")
         @falcon.before(CustomBearerAuth)
         def on_get(self,req,resp):
@@ -131,6 +142,10 @@ class Flows():
                 raise falcon.HTTPMovedPermanently("/")
             
 if __name__ == "__main__":
+    try:
+        mkdir("attachments")
+    except Exception as e:
+        pass
     pbase = pydblite.Base("postdb")
     ubase = pydblite.Base("userdb")
     if not pbase.exists():
