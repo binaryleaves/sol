@@ -42,18 +42,3 @@ if __name__ == "__main__":
         userdb.update(r,admin=True)
         userdb.commit()
         print("User kinged!")
-    if argv[1] == "modUser":
-        userdb = pydblite.Base("userdb").open()
-        for r in userdb:
-            print(r)
-        print("Which user do you wish to modify? [name] ",end="")
-        name = input()
-        target = None
-        for r in userdb:
-            if name in r.values():
-                target = r
-                break
-        userdb.update(r,mod=True)
-        userdb.commit()
-        print("User modded!")
-
